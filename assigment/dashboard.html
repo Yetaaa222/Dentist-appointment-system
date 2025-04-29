@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dentist Dashboard - SmartSmile Dental</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Basic loading/error styles */
+        .loading-indicator, .error-message {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+        /* Style for status indicators */
+        .status-indicator {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-transform: capitalize;
+        }
+        .status-pending { background-color: #f0ad4e; color: white; }
+        .status-confirmed { background-color: #5cb85c; color: white; }
+        .status-declined { background-color: #d9534f; color: white; }
+        .status-completed { background-color: #5bc0de; color: white; }
+        .status-cancelled { background-color: #777; color: white; }
+        /* Add other statuses as needed */
+
+        /* Style disabled buttons */
+        .action-buttons button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .action-buttons .status-indicator {
+             margin-left: auto; /* Push status to the right */
+        }
+
+    </style>
+</head>
+<body>
+    <header class="sticky">
+        <img src="toothlogo.png" style="width: 100px; height: 80px" alt="Dental Clinic Logo">
+        <ul class="navbar">
+            <!-- Keep nav links consistent -->
+            <li><a href="home.html">Home</a></li>
+            <li><a href="book.html">Book Appointment</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="dashboard.html" class="active">Dashboard</a></li>
+        </ul>
+        <div class="icons">
+            <!-- User icon could potentially show initials or link to profile -->
+            <a href="#" class="ri-user-line" id="userProfileLink" title="Profile (Not Implemented)"></a>
+            <!-- Logout Button -->
+            <a href="#" class="logout-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+        </div>
+    </header>
+
+    <main>
+        <section class="dashboard">
+            <div class="container">
+                <div class="welcome-bar">
+                    <!-- Welcome message will be updated by JS -->
+                    <h1 id="welcomeHeading">Loading...</h1>
+                    <div class="date-display">
+                        <i class="fas fa-calendar-alt"></i>
+                        <!-- Date will be updated by JS -->
+                        <span id="current-date"></span>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <!-- Stats will be updated by JS -->
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <div class="stat-info">
+                            <h3 id="statUpcoming">--</h3>
+                            <p>Upcoming Appointments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-hourglass-half"></i>
+                        <div class="stat-info">
+                            <h3 id="statPending">--</h3>
+                            <p>Pending Requests</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle"></i> <!-- Changed icon for completed -->
+                        <div class="stat-info">
+                            <h3 id="statCompletedToday">--</h3>
+                            <p>Completed Today</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="appointment-manager">
+                    <div class="section-header">
+                        <h2>Appointment Management</h2>
+                        <div class="filter-options">
+                            <select id="filter-appointments">
+                                <option value="pending">Pending Requests</option>
+                                <option value="confirmed">Confirmed Upcoming</option>
+                                <option value="today">Today's Appointments (All)</option>
+                                <option value="all">All Appointments</option>
+                                <!-- Add more filters if needed: completed, declined etc. -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Appointment list will be populated by JS -->
+                    <div class="appointment-list" id="appointmentListContainer">
+                        <div class="loading-indicator">Loading appointments...</div>
+                        <!-- Static cards removed - JS will add them here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <section class="contact">
+        <!-- Footer contact section remains the same -->
+        <div class="main-contact">
+            <div></div>
+            <div class="contact-content">
+                <h5>Contact Us</h5> <!-- Changed H1 to H5 for better hierarchy -->
+                <ul> <!-- Use UL for lists -->
+                    <li><a href="about.html">About SmartSmile Dental</a></li>
+                    <li><a href="tel:+260966163997">+260 966163997</a></li>
+                    <li><a href="mailto:myeta2004@gmail.com">myeta2004@gmail.com</a></li>
+                    <li><a href="#">Lusaka, Zambia</a></li>
+                </ul>
+            </div>
+            <div class="contact-content">
+                <h5>Social Media</h5>
+                 <ul> <!-- Use UL for lists -->
+                    <li><a href="#" target="_blank"> <i class="fab fa-twitter"></i> Twitter </a></li>
+                    <li><a href="#" target="_blank"> <i class="fab fa-facebook-f"></i> Facebook </a></li>
+                    <li><a href="#" target="_blank"> <i class="fab fa-instagram"></i> Instagram </a></li>
+                 </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Client Initialization -->
+    <script type="module" src="js/supabaseClient.js"></script>
+
+    <!-- Dashboard Logic -->
+    <script type="module">
+        import { supabase } from './js/supabaseClient.js';
+
+        // DOM Elements
+        const welcomeHeading = document.getElementById('welcomeHeading');
+        const currentDateSpan = document.getElementById('current-date');
+        const logoutButton = document.querySelector('.logout-btn');
+        const appointmentListContainer = document.getElementById('appointmentListContainer');
+        const filterSelect = document.getElementById('filter-appointments');
+        const statUpcoming = document.getElementById('statUpcoming');
+        const statPending = document.getElementById('statPending');
+        const statCompletedToday = document.getElementById('statCompletedToday');
+
+        let currentUser = null; // Store user session info
+        let currentAppointments = []; // Store fetched appointments locally
+
+        // --- Utility Functions ---
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            // Basic formatting, consider a library like date-fns for more complex needs
+            const date = new Date(dateString + 'T00:00:00'); // Ensure date is parsed correctly
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function showLoading(message = 'Loading...') {
+            appointmentListContainer.innerHTML = `<div class="loading-indicator">${message}</div>`;
+        }
+
+        function showError(message) {
+            appointmentListContainer.innerHTML = `<div class="error-message">Error: ${message}</div>`;
+            console.error("Dashboard Error:", message);
+        }
+
+        // --- Authentication & Initialization ---
+        async function checkAuthAndInit() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+
+            if (error) {
+                showError("Could not verify authentication session.");
+                // Redirect after a delay?
+                setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+                return;
+            }
+
+            if (!session) {
+                console.log("No user session found. Redirecting to login.");
+                window.location.href = 'login.html';
+            } else {
+                currentUser = session.user;
+                console.log("User session found:", currentUser);
+                await initializeDashboard();
+            }
+        }
+
+        async function initializeDashboard() {
+            // Display current date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            currentDateSpan.textContent = new Date().toLocaleDateString('en-US', options);
+
+            // Fetch dentist name and update welcome message
+            await fetchDentistNameAndUpdateWelcome();
+
+            // Add listener to logout button
+            if (logoutButton) {
+                logoutButton.addEventListener('click', handleLogout);
+            } else {
+                console.warn("Logout button/link not found with selector '.logout-btn'");
+            }
+
+            // Add listener for filter changes
+            if (filterSelect) {
+                filterSelect.addEventListener('change', () => loadDashboardData(filterSelect.value));
+            }
+
+            // Initial data load (defaulting to 'pending')
+            await loadDashboardData(filterSelect.value);
+        }
+
+        async function fetchDentistNameAndUpdateWelcome() {
+            if (!currentUser || !currentUser.id) {
+                welcomeHeading.textContent = 'Welcome!';
+                return;
+            }
+
+            try {
+                // Fetch dentist details using the user ID from auth
+                const { data: dentistData, error: dentistError } = await supabase
+                    .from('dentists') // Assuming you have a 'dentists' table linked by UUID
+                    .select('first_name, last_name')
+                    .eq('id', currentUser.id)
+                    .single(); // Expecting only one record
+
+                if (dentistError) {
+                    // Handle case where dentist profile might not exist yet
+                    if (dentistError.code === 'PGRST116') { // code for "single() row not found"
+                         console.warn(`No dentist profile found for user ID: ${currentUser.id}. Using email.`);
+                         welcomeHeading.textContent = `Welcome, ${currentUser.email}`;
+                    } else {
+                        throw dentistError; // Rethrow other errors
+                    }
+                } else if (dentistData) {
+                    welcomeHeading.textContent = `Welcome, Dr. ${dentistData.first_name} ${dentistData.last_name}`;
+                } else {
+                     welcomeHeading.textContent = `Welcome, ${currentUser.email}`; // Fallback
+                }
+
+            } catch (error) {
+                console.error("Error fetching dentist name:", error);
+                welcomeHeading.textContent = `Welcome, ${currentUser.email}`; // Fallback on error
+            }
+        }
+
+        // --- Data Loading and Display ---
+        async function loadDashboardData(filter = 'pending') {
+            showLoading(`Loading ${filter} appointments...`);
+            currentAppointments = []; // Clear previous data
+
+            try {
+                let query = supabase
+                    .from('appointments')
+                    .select(`
+                        id,
+                        created_at,
+                        first_name,
+                        last_name,
+                        email,
+                        phone,
+                        appointment_date,
+                        appointment_time,
+                        service_name_booked,
+                        notes,
+                        status,
+                        dentist_id,
+                        service_id
+                    `) // Select specific columns
+                    .order('appointment_date', { ascending: true })
+                    .order('appointment_time', { ascending: true });
+
+                // Apply filters based on dropdown
+                const todayStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+                switch (filter) {
+                    case 'pending':
+                        query = query.eq('status', 'pending');
+                        break;
+                    case 'confirmed':
+                        query = query.eq('status', 'confirmed').gte('appointment_date', todayStr); // Confirmed and upcoming
+                        break;
+                    case 'today':
+                        query = query.eq('appointment_date', todayStr); // All statuses for today
+                        break;
+                    case 'all':
+                        // No additional status filter needed
+                        break;
+                    // Add cases for 'completed', 'declined' etc. if needed
+                }
+
+                // Optional: Filter by assigned dentist if your logic requires it
+                // query = query.eq('dentist_id', currentUser.id); // Uncomment if dentists only see their own appointments
+
+                const { data, error } = await query;
+
+                if (error) throw error;
+
+                currentAppointments = data || [];
+                displayAppointments(currentAppointments);
+                updateDashboardStats(currentAppointments); // Update stats based on the *fetched* data for the current view
+                // Or, fetch all appointments separately for global stats if needed
+
+            } catch (error) {
+                showError(`Failed to load appointments: ${error.message}`);
+            }
+        }
+
+        function displayAppointments(appointments) {
+            appointmentListContainer.innerHTML = ''; // Clear previous content (loading/error messages)
+
+            if (!appointments || appointments.length === 0) {
+                appointmentListContainer.innerHTML = '<p style="text-align: center; padding: 20px;">No appointments found matching the current filter.</p>';
+                return;
+            }
+
+            appointments.forEach(app => {
+                const card = document.createElement('div');
+                card.className = `appointment-card status-${app.status}`; // Add status class for styling
+                card.dataset.appointmentId = app.id; // Store ID for actions
+
+                // Determine which buttons/status to show
+                let actionHtml = '';
+                if (app.status === 'pending') {
+                    actionHtml = `
+                        <button class="accept-btn" data-id="${app.id}"><i class="fas fa-check"></i> Accept</button>
+                        <button class="reschedule-btn" data-id="${app.id}"><i class="fas fa-calendar-alt"></i> Reschedule</button>
+                        <button class="reject-btn" data-id="${app.id}"><i class="fas fa-times"></i> Decline</button>
+                    `;
+                } else {
+                    // Display status for non-pending items
+                    actionHtml = `<span class="status-indicator status-${app.status}">${app.status}</span>`;
+                    // Optionally add other actions for confirmed appointments (e.g., 'Mark as Completed', 'Cancel')
+                }
+
+                card.innerHTML = `
+                    <div class="patient-info">
+                        <div class="patient-avatar"><i class="fas fa-user"></i></div>
+                        <div class="info-container">
+                            <h3>${app.first_name} ${app.last_name}</h3>
+                            <p class="service-type">${app.service_name_booked || 'N/A'}</p>
+                            <div class="appointment-details">
+                                <span><i class="fas fa-calendar"></i> ${formatDate(app.appointment_date)}</span>
+                                <span><i class="fas fa-clock"></i> ${app.appointment_time || 'N/A'}</span>
+                                <span><i class="fas fa-phone"></i> ${app.phone || 'N/A'}</span>
+                            </div>
+                            <p class="notes"><strong>Notes:</strong> ${app.notes || 'None'}</p>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        ${actionHtml}
+                    </div>
+                `;
+                appointmentListContainer.appendChild(card);
+            });
+
+            // Add event listeners AFTER creating the buttons
+            setupActionButtons();
+        }
+
+        // --- Action Handling ---
+        function setupActionButtons() {
+            appointmentListContainer.querySelectorAll('.accept-btn').forEach(button => {
+                button.addEventListener('click', handleAccept);
+            });
+            appointmentListContainer.querySelectorAll('.reject-btn').forEach(button => {
+                button.addEventListener('click', handleDecline);
+            });
+            appointmentListContainer.querySelectorAll('.reschedule-btn').forEach(button => {
+                button.addEventListener('click', handleReschedule);
+            });
+            // Add listeners for other buttons if implemented (e.g., complete, cancel)
+        }
+
+        async function updateAppointmentStatus(appointmentId, newStatus, button) {
+            // Disable all buttons on the card during update
+            const card = button.closest('.appointment-card');
+            const buttons = card.querySelectorAll('.action-buttons button');
+            buttons.forEach(btn => btn.disabled = true);
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...'; // Show loading on the clicked button
+
+            try {
+                const { data, error } = await supabase
+                    .from('appointments')
+                    .update({ status: newStatus })
+                    .eq('id', appointmentId)
+                    .select() // Select the updated row
+                    .single(); // Expect one row back
+
+                if (error) throw error;
+
+                console.log(`Appointment ${appointmentId} updated to ${newStatus}`, data);
+
+                // Option 1: Refresh the entire list for the current filter
+                await loadDashboardData(filterSelect.value);
+
+                // Option 2: Update UI directly (more complex but faster feel)
+                /*
+                card.classList.remove('status-pending'); // Remove old status class
+                card.classList.add(`status-${newStatus}`); // Add new status class
+                const actionButtonsDiv = card.querySelector('.action-buttons');
+                actionButtonsDiv.innerHTML = `<span class="status-indicator status-${newStatus}">${newStatus}</span>`;
+                // Find the appointment in currentAppointments and update its status
+                const index = currentAppointments.findIndex(app => app.id === appointmentId);
+                if (index > -1) {
+                    currentAppointments[index].status = newStatus;
+                }
+                updateDashboardStats(currentAppointments); // Recalculate stats
+                */
+                return true;
+
+            } catch (error) {
+                console.error(`Error updating appointment ${appointmentId} to ${newStatus}:`, error);
+                alert(`Failed to update appointment: ${error.message}`);
+                // Re-enable buttons on failure
+                buttons.forEach(btn => btn.disabled = false);
+                // Restore original button text (you might need to store it)
+                if (button.classList.contains('accept-btn')) button.innerHTML = '<i class="fas fa-check"></i> Accept';
+                if (button.classList.contains('reject-btn')) button.innerHTML = '<i class="fas fa-times"></i> Decline';
+                return false;
+            }
+        }
+
+        async function handleAccept(event) {
+            const button = event.currentTarget;
+            const appointmentId = parseInt(button.dataset.id, 10); // Get ID from data attribute
+            if (!appointmentId) return;
+            await updateAppointmentStatus(appointmentId, 'confirmed', button);
+        }
+
+        async function handleDecline(event) {
+            const button = event.currentTarget;
+            const appointmentId = parseInt(button.dataset.id, 10);
+            if (!appointmentId) return;
+            // Optional: Add a confirmation prompt
+            // if (!confirm("Are you sure you want to decline this appointment?")) {
+            //     return;
+            // }
+            await updateAppointmentStatus(appointmentId, 'declined', button);
+        }
+
+        function handleReschedule(event) {
+            const button = event.currentTarget;
+            const appointmentId = parseInt(button.dataset.id, 10);
+            alert(`Reschedule functionality for appointment ${appointmentId} needs to be implemented (e.g., open a modal with date/time options).`);
+            // Future implementation:
+            // 1. Get appointment details.
+            // 2. Open a modal pre-filled with current date/time.
+            // 3. Allow dentist to select new date/time.
+            // 4. On save, call supabase.update with new date/time and potentially status 'rescheduled'.
+            // 5. Consider sending a notification email to the patient.
+        }
+
+        // --- Stats Update ---
+        async function updateDashboardStats() {
+            // Fetch ALL appointments needed for stats calculation, regardless of filter
+            // This ensures stats reflect the overall picture
+            try {
+                 const { data: allAppointments, error } = await supabase
+                    .from('appointments')
+                    .select('status, appointment_date'); // Only select columns needed for stats
+
+                 if (error) throw error;
+
+                 const todayStr = new Date().toISOString().split('T')[0];
+                 let upcomingCount = 0;
+                 let pendingCount = 0;
+                 let completedTodayCount = 0;
+
+                 allAppointments.forEach(app => {
+                     if (app.status === 'pending') {
+                         pendingCount++;
+                     }
+                     // Count as upcoming if confirmed AND date is today or later
+                     if (app.status === 'confirmed' && app.appointment_date >= todayStr) {
+                         upcomingCount++;
+                     }
+                     if (app.status === 'completed' && app.appointment_date === todayStr) {
+                         completedTodayCount++;
+                     }
+                 });
+
+                 statUpcoming.textContent = upcomingCount;
+                 statPending.textContent = pendingCount;
+                 statCompletedToday.textContent = completedTodayCount;
+
+            } catch (error) {
+                 console.error("Error fetching data for stats:", error);
+                 statUpcoming.textContent = 'Err';
+                 statPending.textContent = 'Err';
+                 statCompletedToday.textContent = 'Err';
+            }
+        }
+
+
+        // --- Logout ---
+        async function handleLogout(e) {
+            e.preventDefault(); // Prevent default link behavior
+            logoutButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; // Show loading
+            logoutButton.disabled = true;
+
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                console.error("Logout failed:", error.message);
+                alert(`Logout failed: ${error.message}`);
+                logoutButton.innerHTML = '<i class="fas fa-sign-out-alt"></i>'; // Restore icon
+                logoutButton.disabled = false;
+            } else {
+                console.log("Logged out successfully.");
+                window.location.href = 'login.html'; // Redirect to login after logout
+            }
+        }
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', checkAuthAndInit);
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dental Appointment System</title>
+    <link rel="stylesheet" href="book.css">  
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+</head>
+<body>
+    <header class="sticky">
+        <img src="toothlogo.png" style="width: 100px; height: 80px" alt="Dental Clinic Logo">
+        <ul class="navbar">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="book.html" class="active">Book Appointment</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About Us</a></li>
+        </ul>
+        <div class="icons">
+            <a href="login.html" class="ri-user-line"></a>
+           
+        </div>
+    </header>
+
+    <!-- Booking Section -->
+    <div class="booking-container">
+        <h2 class="booking-title">Book Your Dental Appointment</h2>
+        <form id="appointmentForm">
+            <!-- Personal Information -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" class="form-control" required>
+                </div>
+            </div>
+            
+            <!-- Service Selection -->
+            <div class="form-group">
+                <label for="service">Choose Service</label>
+                <select id="service" class="form-control" required>
+                    <option value="">-- Select a Service --</option>
+                    <option value="general-checkup">General Checkup</option>
+                    <option value="teeth-cleaning">Teeth Cleaning</option>
+                    <option value="tooth-extraction">Tooth Extraction</option>
+                    <option value="filling">Dental Filling</option>
+                    <option value="root-canal">Root Canal Treatment</option>
+                    <option value="crown">Dental Crown</option>
+                    <option value="whitening">Teeth Whitening</option>
+                    <option value="orthodontics">Orthodontic Consultation</option>
+                </select>
+            </div>
+            
+            <!-- Date Selection -->
+            <div class="form-group">
+                <label for="appointmentDate">Preferred Date</label>
+                <input type="date" id="appointmentDate" class="form-control" required min="" onchange="updateTimeSlots()">
+            </div>
+            
+            <!-- Time Slots -->
+            <div class="form-group">
+                <label>Preferred Time</label>
+                <div class="time-slots" id="timeSlots">
+                    <div class="time-slot" data-time="09:00">9:00 AM</div>
+                    <div class="time-slot" data-time="10:00">10:00 AM</div>
+                    <div class="time-slot" data-time="11:00">11:00 AM</div>
+                    <div class="time-slot" data-time="12:00">12:00 PM</div>
+                    <div class="time-slot" data-time="14:00">2:00 PM</div>
+                    <div class="time-slot" data-time="15:00">3:00 PM</div>
+                    <div class="time-slot" data-time="16:00">4:00 PM</div>
+                </div>
+                <input type="hidden" id="selectedTime" name="selectedTime" required>
+            </div>
+            
+            <!-- Dentist Selection -->
+            <div class="form-group">
+                <label>Select Dentist (Optional)</label>
+                <div class="dentist-selection" id="dentistContainer">
+                    <!-- Dentist cards will be populated dynamically -->
+                    <div class="loading-dentists">Loading available dentists...</div>
+                </div>
+                <input type="hidden" id="selectedDentist" name="selectedDentist">
+            </div>
+            
+            <!-- Additional Notes -->
+            <div class="form-group">
+                <label for="notes">Additional Notes or Special Requirements</label>
+                <textarea id="notes" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit" id="submitButton">Book Appointment</button>
+        </form>
+        
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage" style="display: none;">
+            <h3>Your appointment has been successfully booked!</h3>
+            <p>We've sent a confirmation email with all the details.</p>
+            <p>If you need to make any changes, please contact us at +260 966163997.</p>
+        </div>
+    </div>
+
+    <section class="contact">
+        <div class="main-contact">
+            <div></div>
+            <div class="contact-content">
+                <h1>About Us</h1>
+                <li><a href="about.html">About SmartSmile Dental</a></li>
+                <li><a href="tel:+26966163997">+260 966163997</a></li>
+                <li><a href="mailto:myeta2004@gmail.com">myeta2004@gmail.com</a></li>
+                <li><a href="#">Lusaka, Zambia</a></li>
+            </div>
+
+            <div class="contact-content">
+                <h5>Social Media</h5>
+                <a href="#" target="_blank"> <i class="fab fa-twitter"></i> Twitter </a>
+                <a href="#" target="_blank"> <i class="fab fa-facebook-f"></i> Facebook </a>
+                <a href="#" target="_blank"> <i class="fab fa-instagram"></i> Instagram </a>
+            </div>
+        </div>
+    </section>
+    
+   
+    <!-- Load Supabase JS from CDN first -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        
+    <!-- Updated booking script using the client module -->
+    <script type="module">
+        // Import the Supabase client and helper functions
+        import { supabase, createAppointment, getDentists } from './js/supabaseClient.js';
+        
+        // DOM Elements
+        const appointmentForm = document.getElementById('appointmentForm');
+        const submitButton = document.getElementById('submitButton');
+        const successMessage = document.getElementById('successMessage');
+        const timeSlots = document.getElementById('timeSlots');
+        const selectedTimeInput = document.getElementById('selectedTime');
+        const dentistContainer = document.getElementById('dentistContainer');
+        const selectedDentistInput = document.getElementById('selectedDentist');
+        
+        // Set minimum date to today
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        document.getElementById('appointmentDate').min = formattedDate;
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', async function() {
+            setupTimeSlotsSelection();
+            await loadAvailableDentists();
+        });
+        
+        // Setup time slot selection functionality
+        function setupTimeSlotsSelection() {
+            // Add click listeners to all time slots
+            const allTimeSlots = timeSlots.querySelectorAll('.time-slot');
+            allTimeSlots.forEach(slot => {
+                slot.addEventListener('click', function() {
+                    // Remove active class from all slots
+                    allTimeSlots.forEach(s => s.classList.remove('active'));
+                    // Add active class to clicked slot
+                    this.classList.add('active');
+                    // Update hidden input value
+                    selectedTimeInput.value = this.dataset.time;
+                });
+            });
+        }
+        
+        // Mock function for updating time slots based on date
+        // In a real app, this would query the database for available slots
+        function updateTimeSlots() {
+            // For now, just reset the selection
+            const allTimeSlots = timeSlots.querySelectorAll('.time-slot');
+            allTimeSlots.forEach(slot => {
+                slot.classList.remove('active');
+                slot.classList.remove('unavailable');
+            });
+            selectedTimeInput.value = '';
+            
+            // TODO: Check database for unavailable slots on the selected date
+            // and mark them as unavailable
+        }
+        
+        // Load available dentists from the database
+        async function loadAvailableDentists() {
+            try {
+                // Clear previous content
+                dentistContainer.innerHTML = '<div class="loading-dentists">Loading available dentists...</div>';
+                
+                // Fetch dentists from the database
+                const dentists = await getDentists();
+                
+                if (!dentists || dentists.length === 0) {
+                    dentistContainer.innerHTML = '<p>No dentists available at the moment.</p>';
+                    return;
+                }
+                
+                // Clear loading message
+                dentistContainer.innerHTML = '';
+                
+                // Create dentist cards
+                dentists.forEach(dentist => {
+                    const card = document.createElement('div');
+                    card.className = 'dentist-card';
+                    card.dataset.dentistId = dentist.id;
+                    
+                    card.innerHTML = `
+                        <img src="/api/placeholder/100/100" alt="Dr. ${dentist.first_name} ${dentist.last_name}" class="dentist-img">
+                        <div class="dentist-info">
+                            <div class="dentist-name">Dr. ${dentist.first_name} ${dentist.last_name}</div>
+                            <div class="dentist-specialty">${dentist.specialty}</div>
+                        </div>
+                    `;
+                    
+                    // Add click handler
+                    card.addEventListener('click', function() {
+                        // Remove active class from all cards
+                        dentistContainer.querySelectorAll('.dentist-card').forEach(c => {
+                            c.classList.remove('active');
+                        });
+                        // Add active class to clicked card
+                        this.classList.add('active');
+                        // Update hidden input
+                        selectedDentistInput.value = this.dataset.dentistId;
+                    });
+                    
+                    dentistContainer.appendChild(card);
+                });
+                
+            } catch (error) {
+                console.error('Error loading dentists:', error);
+                dentistContainer.innerHTML = '<p>Failed to load dentists. Please try again later.</p>';
+            }
+        }
+        
+        // Form submission handler
+        appointmentForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevent default form submission
+            
+            // Disable submit button to prevent double submission
+            submitButton.disabled = true;
+            submitButton.textContent = 'Booking...';
+            
+            try {
+                // Get form data
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const serviceId = document.getElementById('service').value;
+                const serviceName = document.getElementById('service').options[document.getElementById('service').selectedIndex].text;
+                const appointmentDate = document.getElementById('appointmentDate').value;
+                const appointmentTime = selectedTimeInput.value;
+                const selectedDentist = selectedDentistInput.value || null; // Optional
+                const notes = document.getElementById('notes').value;
+                
+                // Basic validation
+                if (!firstName || !lastName || !email || !phone || !serviceId || !appointmentDate || !appointmentTime) {
+                    alert('Please fill in all required fields and select a time slot.');
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Book Appointment';
+                    return;
+                }
+                
+                // Prepare appointment data
+                const appointmentData = {
+                    first_name: firstName,
+                    last_name: lastName,
+                    email: email,
+                    phone: phone,
+                    service_id: serviceId,
+                    service_name_booked: serviceName,
+                    appointment_date: appointmentDate,
+                    appointment_time: appointmentTime,
+                    dentist_id: selectedDentist, // Will be null if not selected
+                    notes: notes,
+                    status: 'pending' // Default status
+                };
+                
+                // Create the appointment using our helper function
+                const result = await createAppointment(appointmentData);
+                
+                if (!result) {
+                    throw new Error('Failed to create appointment');
+                }
+                
+                console.log('Appointment booked successfully:', result);
+                
+                // Show success message and hide form
+                appointmentForm.style.display = 'none';
+                successMessage.style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error booking appointment:', error);
+                alert(`Failed to book appointment: ${error.message}. Please try again.`);
+                
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Book Appointment';
+            }
+        });
+    </script>
+    
+</body>
+</html>

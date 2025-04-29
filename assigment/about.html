@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dental Appointment System</title>
+    <link rel="stylesheet" href="about.css">  
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="sticky">
+        <img src="toothlogo.png" style="width: 100px; height: 80px" alt="Dental Clinic Logo">
+        <ul class="navbar">
+            <li><a href="home.html" >Home</a></li>
+            <li><a href="book.html">Book Appointment</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html" class="active">About Us</a></li>
+           
+        </ul>
+        <div class="icons">
+            <a href="login.html" class="ri-user-line"></a>
+            
+        </div>
+    </header>
+
+    <section class="home">
+        <div class="home-text">
+            <h4>Welcome to SmartSmile Dental</h4>
+            <h1>Brighter Smiles, Healthier Lives</h1>
+            <p>Experience professional dental care with a gentle touch. Book an appointment today for a confident smile.</p>
+            <a href="book.html" class="btn">Schedule Your Visit</a>
+        </div>
+        <div class="home-img">
+            <img src="aboutpic.png" alt="Dental Care Image">
+        </div>
+    </section>
+    
+
+    <section class="about">  </section>
+
+    <section class="about"> 
+        <div class="section-title">
+         <h1>About Us</h1>
+       </div>
+       <div class="about-content">
+            <p>Welcome to SmileCare Dental, where your oral health is our top priority! We are a trusted dental clinic committed to providing top-quality dental care to patients of all ages.\
+              
+              With a team of experienced and compassionate dental professionals, we offer a wide range of services, including teeth cleaning, root canal treatments, dental implants, braces, and more. Our goal is to ensure that every patient enjoys a healthy, beautiful smile through personalized and affordable dental care.
+            
+              At SmileCare Dental, we believe that dental health should be convenient and stress-free. That’s why we offer an easy-to-use online appointment booking system, allowing you to schedule your visit at your convenience.
+            
+            </p>
+  
+          <p>Why Choose Us?: </p>
+          <ul>
+             <li>✅ Expert Dental Care – Our skilled dentists use the latest technology for safe and effective treatments.<li>
+             <li>✅ Patient-Centered Approach – We prioritize your comfort and tailor treatments to your needs.<li>
+             <li>✅ Advanced Equipment – We use modern dental tools for accurate diagnosis and quality care.</li>
+             <li>✅ Flexible Appointments – Book your visit online anytime, anywhere.</li>
+           </ul>
+
+
+        </div>
+
+    </section>
+
+    <section class="contact">
+        <div class="main-contact">
+            <div></div>
+            <div class="contact-content">
+                <h1>About Us</h1>
+                <li><a href="about.html">About SmartSmile Dental</a></li>
+                <li><a href="tel:+26966163997">+260 966163997</a></li>
+                <li><a href="mailto:myeta2004@gmail.com">myeta2004@gmail.com</a></li>
+                <li><a href="#">Lusaka, Zambia</a></li>
+            </div>
+
+            <div class="contact-content">
+                <h5>Social Media</h5>
+                <a href="#" target="_blank"> <i class="fab fa-twitter"></i> Twitter </a>
+                <a href="#" target="_blank"> <i class="fab fa-facebook-f"></i> Facebook </a>
+                <a href="#" target="_blank"> <i class="fab fa-instagram"></i> Instagram </a>
+            </div>
+        </div>
+    </section>
+
+
+    <script src="script.js"></script>
+    <script>
+        const menuIcon = document.getElementById("menu-icon");
+        const navbar = document.querySelector(".navbar");
+
+        menuIcon.onclick = function () {
+            menuIcon.classList.toggle("bx-x");
+            navbar.classList.toggle("open");
+        };
+
+        window.onscroll = () => {
+            menuIcon.classList.remove("bx-x");
+            navbar.classList.remove("open");
+        };
+
+        const sr = ScrollReveal({
+            distance: "60px",
+            duration: 2500,
+            delay: 400,
+            reset: true,
+        });
+
+        sr.reveal(".home-text", { delay: 200, origin: "top" });
+        sr.reveal(".home-img", { delay: 400, origin: "bottom" }); // Added reveal for image
+    </script>
+</body>
+</html>

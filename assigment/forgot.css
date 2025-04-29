@@ -1,0 +1,190 @@
+/* Basic Styling for the Login Page */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+    text-decoration: none;
+    list-style: none;
+}
+
+:root {
+    --bg-color: #f8f9fa; 
+    --text-color: #343a40;
+    --primary-color: #01b8bf; 
+    --secondary-color: #6c757d; 
+    --light-color: #f2f2f2; 
+    --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+body {
+    color: var(--text-color);
+    background: var(--bg-color);
+}
+
+/* Header */
+header {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #e9f4f0; 
+    padding: 15px 11%;
+    border-bottom: 1px solid #eee;
+    transition: all 0.45s ease;
+    box-shadow: var(--box-shadow);
+}
+
+.navbar {
+    display: flex;
+}
+
+.navbar a {
+    font-size: 1rem;
+    color: var(--text-color);
+    font-weight: 500;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    transition: all 0.45s ease;
+}
+
+.navbar a:hover,
+.navbar a.active {
+    color: var(--primary-color);
+}
+
+/* Icons */
+.icons {
+    display: flex;
+    align-items: center;
+}
+
+.icons i, .bx-cart, .ri-user-line {
+    height: 40px;
+    width: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--text-color);
+    font-size: 20px;
+    margin: 0 10px;
+    transition: all 0.45s ease;
+}
+
+.icons i:hover, .bx-cart:hover, .ri-user-line:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.login-section {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin-top:200px;
+    margin-bottom:200px;
+}
+
+.login-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensures padding is included in the element's total width and height */
+}
+
+.form-group .btn {
+    background-color: var(--primary-color); /* Example primary color */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%; /* Full width for button */
+    transition: all .45s ease;
+    box-shadow: var(--box-shadow)
+}
+
+.form-group .btn:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+
+.form-group a {
+    color: var(--primary-color);;
+    text-decoration: none;
+}
+
+.form-group a:hover {
+    text-decoration: underline;
+}
+
+
+.contact {
+    padding: 80px 11%;
+    background-color: #000000;
+}
+
+.main-contact {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, auto));
+    gap: 2rem;
+    align-items: center;
+}
+
+.contact-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.contact-content h5 {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-bottom: 20px;
+}
+
+.contact-content a {
+    color: #fff;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.contact-content a:hover {
+    color: var(--primary-color);
+}
